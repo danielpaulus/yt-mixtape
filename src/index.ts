@@ -11,7 +11,7 @@ centralWidget.setLayout(rootLayout);
 
 const label = new QLabel();
 label.setObjectName("mylabel");
-label.setText("wassup ");
+label.setText("wasup");
 
 const button = new QPushButton();
 button.setIcon(new QIcon(logo));
