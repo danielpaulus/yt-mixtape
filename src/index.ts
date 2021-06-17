@@ -1,6 +1,6 @@
 import { QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QIcon, QTextEdit, QProgressBar, QListWidget, QListWidgetItem, QPixmap } from '@nodegui/nodegui';
 import logo from '../assets/logox200.png';
-import ytdl from 'ytdl-core';
+import {download} from './youtube'
 import * as fs from 'fs';
 
 import QRCode from 'qrcode'
@@ -46,52 +46,14 @@ const progressBar = new QProgressBar();
 const startDownloadButton = new QPushButton();
 startDownloadButton.setText("start download")
 startDownloadButton.addEventListener('clicked', ()=>{
-
+  progressBar.setMinimum(0);
+  progressBar.setMaximum(100);
+  progressBar.reset();
   let url = youtubeLinkInput.toPlainText();
-
   
-  ytdl.getInfo(url).then(info => {
-    console.log('title:', info.videoDetails.title);
-    console.log('rating:', info.player_response.videoDetails.averageRating);
-    console.log('uploaded by:', info.videoDetails.author.name);
-    console.log(JSON.stringify(info.videoDetails, null, 2));
-
-    const video = ytdl(url);
-    
-    let starttime:number;
-    video.pipe(fs.createWriteStream(`public/media/${info.videoDetails.videoId}.webm`));
-    
-    video.once('response', () => {
-      starttime = Date.now();
-    });
-    progressBar.setMinimum(0);
-    progressBar.setMaximum(100);
-    progressBar.reset();
-    video.on('progress', (chunkLength, downloaded, total) => {
-      const percent = downloaded / total;
-      const downloadedMinutes = (Date.now() - starttime) / 1000 / 60;
-      const estimatedDownloadTime = (downloadedMinutes / percent) - downloadedMinutes;
-      progressBar.setValue(percent*100);
-     /* progressBar.update();
-      process.stdout.write(`${(percent * 100).toFixed(2)}% downloaded `);
-      process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
-      process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
-      process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);*/
-      const videoInfo = {
-        title: info.videoDetails.title,
-        uploadedBy: info.videoDetails.author.name,
-        id:info.videoDetails.videoId
-      }
-      fs.writeFileSync(`public/media/${info.videoDetails.videoId}.json`, JSON.stringify(videoInfo));
-      
-    });
-    video.on('end', () => {
-      process.stdout.write('\n\n');
-    });
-
-  });
-
- 
+  download((min:number, max:number, progress:number)=>{
+    progressBar.setValue(progress);
+  }, url)
 });
 
 const browserLinkLabel = new QLabel();
