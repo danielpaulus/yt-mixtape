@@ -6,6 +6,7 @@ import { generateQR } from './qrCodeGenerator'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
 import express from 'express';
+import {MediaInfo} from './mediainfo'
 
 (async () => {
   const port = 8000
@@ -30,7 +31,7 @@ import express from 'express';
     const files: any[] = [];
     fs.readdirSync('public/media').forEach(file => {
       if (file.endsWith(".webm")) {
-        const info = JSON.parse(fs.readFileSync("public/media/" + file.replace(".webm", ".json")).toString())
+        const info:MediaInfo = JSON.parse(fs.readFileSync("public/media/" + file.replace(".webm", ".json")).toString())
 
         files.push({ filename: file, title: info.title });
       }
@@ -38,6 +39,19 @@ import express from 'express';
     });
     const fileLinks: string = files.map(x => `<a href="video.html?v=${x.filename}">${x.title}</a>`).join("<br/>")
     res.send(fileLinks)
+  });
+  app.get('/mediainfo', (req, res) => {
+
+    const infos: any[] = [];
+    fs.readdirSync('public/media').forEach(file => {
+      if (file.endsWith(".webm")) {
+        const info:MediaInfo = JSON.parse(fs.readFileSync("public/media/" + file.replace(".webm", ".json")).toString())
+
+        infos.push(info);
+      }
+
+    });res.send(infos);
+
   });
   app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);

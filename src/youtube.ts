@@ -1,15 +1,18 @@
 import ytdl from 'ytdl-core';
 import * as fs from 'fs';
+import {MediaInfo} from './mediainfo'
 
 export const download = async (updater: ProgressUpdateFunc, url: string) => {
 
   const info = await ytdl.getInfo(url);
-  const videoInfo = {
-    title: info.videoDetails.title,
-    uploadedBy: info.videoDetails.author.name,
-    id: info.videoDetails.videoId
-  }
+  const videoInfo = new MediaInfo(
+    info.videoDetails.title,
+    info.videoDetails.author.name,
+    info.videoDetails.videoId
+  )
+
   await fs.promises.writeFile(`public/media/${info.videoDetails.videoId}.json`, JSON.stringify(videoInfo))
+  await fs.promises.writeFile(`public/media/${info.videoDetails.videoId}-blob.json`, JSON.stringify(info))
 
   console.log('title:', info.videoDetails.title);
   console.log('rating:', info.player_response.videoDetails.averageRating);
