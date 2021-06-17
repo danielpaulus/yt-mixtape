@@ -4,7 +4,7 @@ import ytdl from 'ytdl-core';
 import * as fs from 'fs';
 
 const win = new QMainWindow();
-win.setWindowTitle("Hello World");
+win.setWindowTitle("yt-mixtape");
 
 const centralWidget = new QWidget();
 centralWidget.setObjectName("myroot");
