@@ -1,4 +1,4 @@
 interface ProgressUpdateFunc {
-    (min:number, max: number, progress: number): void;
+    (min: number, max: number, progress: number, estimatedDownloadTime: number): void;
 }
 

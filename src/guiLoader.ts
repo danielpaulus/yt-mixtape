@@ -23,14 +23,15 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
     const startDownloadButton = new QPushButton();
     startDownloadButton.setText("start download")
     startDownloadButton.addEventListener('clicked', () => {
-        statusLabel.setText("downloading..")
+        statusLabel.setText("start download..")
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
         progressBar.reset();
         let url = youtubeLinkInput.toPlainText();
         startDownloadButton.setEnabled(false)
-        download((min: number, max: number, progress: number) => {
+        download((min: number, max: number, progress: number, estimatedDownloadTime: number) => {
             progressBar.setValue(progress);
+            statusLabel.setText(`remaining:${Math.round(estimatedDownloadTime * 60)}s`)
         }, url).then(() => {
             statusLabel.setText("done..")
         }).catch((reason => {
