@@ -4,3 +4,4 @@ dist/
 .vscode
 public/media/*.json
 public/media/*.webm
+.DS_Store
