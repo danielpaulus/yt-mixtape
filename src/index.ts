@@ -140,7 +140,7 @@ win.show();
 
 // rest of the code remains same
 const app = express();
-const PORT = 8000;
+const PORT = Number.parseInt(port);
 app.use(express.static('public'));
 app.get('/', (req, res) => {
   const files:any[]  = [];
