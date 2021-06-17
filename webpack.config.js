@@ -39,5 +39,8 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx"]
   },
+  externals: {
+    sqlite3: 'commonjs sqlite3'
+},
   plugins: [new CleanWebpackPlugin()]
 };
