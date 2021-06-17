@@ -17,40 +17,47 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
     centralWidget.setLayout(rootLayout);
 
     const qrCodeLabel = new QLabel();
-    qrCodeLabel.setObjectName("mylabel");
     qrCodeLabel.setPixmap(image);
+
     const progressBar = new QProgressBar();
     const startDownloadButton = new QPushButton();
     startDownloadButton.setText("start download")
     startDownloadButton.addEventListener('clicked', () => {
+        statusLabel.setText("downloading..")
         progressBar.setMinimum(0);
         progressBar.setMaximum(100);
         progressBar.reset();
         let url = youtubeLinkInput.toPlainText();
-
+        startDownloadButton.setEnabled(false)
         download((min: number, max: number, progress: number) => {
             progressBar.setValue(progress);
-        }, url)
+        }, url).then(() => {
+            statusLabel.setText("done..")
+        }).catch((reason => {
+            statusLabel.setText(`download failed:${reason}`)
+        }))
+            .finally(() => {
+                progressBar.reset()
+                startDownloadButton.setEnabled(true)
+            })
     });
 
     const browserLinkLabel = new QLabel();
     browserLinkLabel.setOpenExternalLinks(true);
     browserLinkLabel.setText(`<a href="http://localhost:${port}">open in local browser</a>`);
-    browserLinkLabel.setInlineStyle(`
-  color: red;
-`);
+    browserLinkLabel.setObjectName("browserLinkLabel");
 
+    const statusLabel = new QLabel();
+    statusLabel.setText("idle..")
 
     const youtubeLinkInput = new QTextEdit();
     youtubeLinkInput.setText(defaultYoutubeLink);
-
-
-
 
     rootLayout.addWidget(qrCodeLabel);
     rootLayout.addWidget(browserLinkLabel);
     rootLayout.addWidget(youtubeLinkInput);
     rootLayout.addWidget(startDownloadButton);
+    rootLayout.addWidget(statusLabel);
     rootLayout.addWidget(progressBar);
     win.setCentralWidget(centralWidget);
     win.setStyleSheet(
@@ -61,7 +68,7 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
       align-items: 'center';
       justify-content: 'center';
     }
-    #mylabel {
+    #browserLinkLabel {
       font-size: 16px;
       font-weight: bold;
       padding: 1;
