@@ -61,7 +61,8 @@ playbutton.addEventListener('clicked', ()=>{
 
 });
 const label2 = new QLabel();
-label2.setText("World");
+label2.setOpenExternalLinks(true);
+label2.setText('<a href="http://localhost:8000">open player</a> ');
 label2.setInlineStyle(`
   color: red;
 `);
