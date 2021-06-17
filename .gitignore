@@ -5,3 +5,4 @@ dist/
 public/media/*.json
 public/media/*.webm
 .DS_Store
+qr.png

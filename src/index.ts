@@ -1,7 +1,35 @@
-import { QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QIcon, QTextEdit, QProgressBar, QListWidget, QListWidgetItem } from '@nodegui/nodegui';
+import { QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QIcon, QTextEdit, QProgressBar, QListWidget, QListWidgetItem, QPixmap } from '@nodegui/nodegui';
 import logo from '../assets/logox200.png';
 import ytdl from 'ytdl-core';
 import * as fs from 'fs';
+
+import QRCode from 'qrcode'
+
+import sqlite3 from 'sqlite3'
+import { open } from 'sqlite'
+import express from 'express';
+
+import * as os from 'os'
+
+const en0 = os.networkInterfaces()["en0"]
+if (en0 === undefined){
+  throw "no network interface en0 found"
+}
+const ipAddress = en0.filter(x=>x.family==="IPv4")[0].address
+const port = "8000"
+const generateQR = async (text: string) => {
+  try {
+    await QRCode.toFile("temp/qr.png", text)
+  } catch (err) {
+    console.error(err)
+  }
+}
+(async () => {
+await generateQR(`http://${ipAddress}:${port}`)
+
+const absoulteImagePath = 'temp/qr.png';
+const image = new QPixmap();
+image.load(absoulteImagePath);
 
 const win = new QMainWindow();
 win.setWindowTitle("yt-mixtape");
@@ -13,10 +41,10 @@ centralWidget.setLayout(rootLayout);
 
 const label = new QLabel();
 label.setObjectName("mylabel");
-label.setText("wasup");
+label.setPixmap(image);
 const progressBar = new QProgressBar();
 const button = new QPushButton();
-button.setIcon(new QIcon(logo));
+button.setText("download")
 button.addEventListener('clicked', ()=>{
 
   let url = textEdit.toPlainText();
@@ -65,11 +93,7 @@ button.addEventListener('clicked', ()=>{
 
  
 });
-const playbutton = new QPushButton();
-playbutton.setText("play");
-playbutton.addEventListener('clicked', ()=>{
 
-});
 const label2 = new QLabel();
 label2.setOpenExternalLinks(true);
 label2.setText('<a href="http://localhost:8000">open player</a> ');
@@ -82,26 +106,15 @@ const textEdit = new QTextEdit();
 textEdit.setText('https://www.youtube.com/watch?v=7EPJEg6R3SM');
 
 
-const listWidget = new QListWidget();
 
-for (let i = 0; i < 30; i++) {
-let listWidgetItem = new QListWidgetItem();
-listWidgetItem.setText('listWidgetItem ' + i);
-if (i===3) {
-listWidgetItem.setCheckState(2);
-} else {
-listWidgetItem.setCheckState(0);
-}
-listWidget.addItem(listWidgetItem);
-}
 
 rootLayout.addWidget(label);
 rootLayout.addWidget(progressBar);
 rootLayout.addWidget(button);
 rootLayout.addWidget(label2);
 rootLayout.addWidget(textEdit);
-rootLayout.addWidget(playbutton);
-rootLayout.addWidget(listWidget);
+
+
 win.setCentralWidget(centralWidget);
 win.setStyleSheet(
   `
@@ -122,7 +135,7 @@ win.show();
 
 (global as any).win = win;
 
-import express from 'express';
+
 // rest of the code remains same
 const app = express();
 const PORT = 8000;
@@ -144,14 +157,14 @@ app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
 });
 
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
 
-// this is a top-level await 
-(async () => {
+
+
     // open the database
     const db = await open({
       filename: 'database.db',
       driver: sqlite3.Database
     })
-})()
+
+
+  })()
