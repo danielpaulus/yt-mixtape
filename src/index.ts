@@ -39,15 +39,15 @@ centralWidget.setObjectName("myroot");
 const rootLayout = new FlexLayout();
 centralWidget.setLayout(rootLayout);
 
-const label = new QLabel();
-label.setObjectName("mylabel");
-label.setPixmap(image);
+const qrCodeLabel = new QLabel();
+qrCodeLabel.setObjectName("mylabel");
+qrCodeLabel.setPixmap(image);
 const progressBar = new QProgressBar();
-const button = new QPushButton();
-button.setText("download")
-button.addEventListener('clicked', ()=>{
+const startDownloadButton = new QPushButton();
+startDownloadButton.setText("start download")
+startDownloadButton.addEventListener('clicked', ()=>{
 
-  let url = textEdit.toPlainText();
+  let url = youtubeLinkInput.toPlainText();
 
   
   ytdl.getInfo(url).then(info => {
@@ -94,32 +94,34 @@ button.addEventListener('clicked', ()=>{
  
 });
 
-const label2 = new QLabel();
-label2.setOpenExternalLinks(true);
-label2.setText('<a href="http://localhost:8000">open player</a> ');
-label2.setInlineStyle(`
+const browserLinkLabel = new QLabel();
+browserLinkLabel.setOpenExternalLinks(true);
+browserLinkLabel.setText(`<a href="http://localhost:${port}">open in local browser</a>`);
+browserLinkLabel.setInlineStyle(`
   color: red;
 `);
 
 
-const textEdit = new QTextEdit();
-textEdit.setText('https://www.youtube.com/watch?v=7EPJEg6R3SM');
+const youtubeLinkInput = new QTextEdit();
+youtubeLinkInput.setText('https://www.youtube.com/watch?v=7EPJEg6R3SM');
 
 
 
 
-rootLayout.addWidget(label);
+rootLayout.addWidget(qrCodeLabel);
+rootLayout.addWidget(browserLinkLabel);
+rootLayout.addWidget(youtubeLinkInput);
+rootLayout.addWidget(startDownloadButton);
 rootLayout.addWidget(progressBar);
-rootLayout.addWidget(button);
-rootLayout.addWidget(label2);
-rootLayout.addWidget(textEdit);
+
+
 
 
 win.setCentralWidget(centralWidget);
 win.setStyleSheet(
   `
     #myroot {
-      background-color: #009688;
+      background-color: #001010;
       height: '100%';
       align-items: 'center';
       justify-content: 'center';
