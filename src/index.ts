@@ -30,8 +30,17 @@ const generateQR = async (text: string) => {
   await generateQR(`http://${ipAddress}:${port}`)
 
   const absoulteImagePath = 'temp/qr.png';
-
-  initGUI(absoulteImagePath, port)
+  let headless = false
+  var myArgs = process.argv.slice(2);
+  if (myArgs.length > 0) {
+    if (myArgs[0] === "--headless") {
+      console.log("running headless mode")
+      headless = true
+    }
+  }
+  if (!headless) {
+    initGUI(absoulteImagePath, port)
+  }
 
   // rest of the code remains same
   const app = express();
@@ -54,14 +63,9 @@ const generateQR = async (text: string) => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
   });
 
-
-
-
   // open the database
   const db = await open({
     filename: 'database.db',
     driver: sqlite3.Database
   })
-
-
 })()

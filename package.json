@@ -9,7 +9,8 @@
     "build": "webpack -p",
     "start": "webpack && qode ./dist/index.js",
     "debug": "webpack && qode --inspect ./dist/index.js",
-    "start:watch": "nodemon -e js,ts,tsx --ignore dist/ --ignore node_modules/ --exec npm start"
+    "watch": "nodemon -e js,ts,tsx --ignore dist/ --ignore node_modules/ --exec npm start",
+    "watch:headless": "nodemon -e js,ts,tsx --ignore dist/ --ignore node_modules/ --exec 'npm start -- --headless'"
   },
   "dependencies": {
     "@nodegui/nodegui": "^0.30.1",
