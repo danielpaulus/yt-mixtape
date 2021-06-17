@@ -128,14 +128,16 @@ const app = express();
 const PORT = 8000;
 app.use(express.static('public'));
 app.get('/', (req, res) => {
-  const files:string[]  = [];
+  const files:any[]  = [];
   fs.readdirSync('public/media').forEach(file => {
     if (file.endsWith(".webm")){
-files.push(file)
+      const info = JSON.parse(fs.readFileSync("public/media/"+file.replace(".webm", ".json")).toString())
+
+        files.push({filename:file, title:info.title});
     }
     
   });
-  const fileLinks: string= files.map(x=> `<a href="video.html?v=${x}">${x}</a>`).join("<br/>")
+  const fileLinks: string= files.map(x=> `<a href="video.html?v=${x.filename}">${x.title}</a>`).join("<br/>")
   res.send(fileLinks)
 });
 app.listen(PORT, () => {
