@@ -49,7 +49,12 @@ button.addEventListener('clicked', ()=>{
       process.stdout.write(`(${(downloaded / 1024 / 1024).toFixed(2)}MB of ${(total / 1024 / 1024).toFixed(2)}MB)\n`);
       process.stdout.write(`running for: ${downloadedMinutes.toFixed(2)}minutes`);
       process.stdout.write(`, estimated time left: ${estimatedDownloadTime.toFixed(2)}minutes `);*/
-      
+      const videoInfo = {
+        title: info.videoDetails.title,
+        uploadedBy: info.videoDetails.author.name,
+        id:info.videoDetails.videoId
+      }
+      fs.writeFileSync(`public/media/${info.videoDetails.videoId}.json`, JSON.stringify(videoInfo));
       
     });
     video.on('end', () => {
@@ -122,7 +127,17 @@ import express from 'express';
 const app = express();
 const PORT = 8000;
 app.use(express.static('public'));
-app.get('/', (req, res) => res.send('Express + TypeScript Server'));
+app.get('/', (req, res) => {
+  const files:string[]  = [];
+  fs.readdirSync('public/media').forEach(file => {
+    if (file.endsWith(".webm")){
+files.push(file)
+    }
+    
+  });
+  const fileLinks: string= files.map(x=> `<a href="video.html?v=${x}">${x}</a>`).join("<br/>")
+  res.send(fileLinks)
+});
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
 });
