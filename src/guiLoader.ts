@@ -7,7 +7,7 @@ import * as fs from 'fs'
 import ffmpegBinaries from 'ffmpeg-static' 
 console.log(ffmpegBinaries)
 const ffmpegPath = ffmpegBinaries
-ffmpeg.setFfmpegPath("node_modules/ffmpeg-static/ffmpeg");
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const defaultYoutubeLink = 'https://www.youtube.com/watch?v=7EPJEg6R3SM'
 const appTitle = "yt-mixtape"

@@ -1,5 +1,8 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
+const PermissionsOutputPlugin = require('webpack-permissions-plugin');
+
 var webpack = require('webpack');
 module.exports = {
   mode: process.NODE_ENV || "development",
@@ -46,5 +49,18 @@ module.exports = {
   plugins: [new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.FLUENTFFMPEG_COV': false
-  })]
+  }),
+  new CopyPlugin(
+    {patterns:[
+    { from: 'node_modules/ffmpeg-static/ffmpeg', to: '' },
+]}),
+new PermissionsOutputPlugin({
+  buildFiles: [
+    {
+      path: 'dist/ffmpeg',
+      fileMode: '755'
+    },]
+}),
+
+]
 };
