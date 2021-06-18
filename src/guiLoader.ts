@@ -3,10 +3,7 @@ import { download } from './youtube'
 import ffmpeg from 'fluent-ffmpeg'
 import * as fs from 'fs'
 
-
-import ffmpegBinaries from 'ffmpeg-static' 
-console.log(ffmpegBinaries)
-const ffmpegPath = ffmpegBinaries
+import ffmpegPath from 'ffmpeg-static' 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 const defaultYoutubeLink = 'https://www.youtube.com/watch?v=7EPJEg6R3SM'
