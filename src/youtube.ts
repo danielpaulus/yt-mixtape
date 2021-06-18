@@ -19,11 +19,12 @@ export const download = async (updater: ProgressUpdateFunc, url: string) => {
   console.log('uploaded by:', info.videoDetails.author.name);
 
   const video = ytdl(url);
-  const downloadPromise = new Promise<void>((resolve, reject) => {
+  const downloadPromise = new Promise<string>((resolve, reject) => {
 
     let starttime: number;
     video.on('error', reject)
-    const fileStream = fs.createWriteStream(`public/media/${info.videoDetails.videoId}.webm`)
+    const videoPath = `public/media/${info.videoDetails.videoId}.webm`
+    const fileStream = fs.createWriteStream(videoPath)
     fileStream.on('error', reject)
     video.pipe(fileStream);
 
@@ -39,8 +40,8 @@ export const download = async (updater: ProgressUpdateFunc, url: string) => {
     });
 
     video.on('end', () => {
-      resolve()
+      resolve(videoPath)
     });
   });
-  await downloadPromise
+  return await downloadPromise
 }

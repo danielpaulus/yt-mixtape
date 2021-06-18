@@ -1,6 +1,6 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-
+var webpack = require('webpack');
 module.exports = {
   mode: process.NODE_ENV || "development",
   entry: "./src",
@@ -40,7 +40,11 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".jsx"]
   },
   externals: {
-    sqlite3: 'commonjs sqlite3'
+    sqlite3: 'commonjs sqlite3',
+    
 },
-  plugins: [new CleanWebpackPlugin()]
+  plugins: [new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.FLUENTFFMPEG_COV': false
+  })]
 };

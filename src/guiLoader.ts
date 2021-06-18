@@ -1,5 +1,13 @@
 import { QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QTextEdit, QProgressBar, QPixmap } from '@nodegui/nodegui';
 import { download } from './youtube'
+import ffmpeg from 'fluent-ffmpeg'
+import * as fs from 'fs'
+
+
+import ffmpegBinaries from 'ffmpeg-static' 
+console.log(ffmpegBinaries)
+const ffmpegPath = ffmpegBinaries
+ffmpeg.setFfmpegPath("node_modules/ffmpeg-static/ffmpeg");
 
 const defaultYoutubeLink = 'https://www.youtube.com/watch?v=7EPJEg6R3SM'
 const appTitle = "yt-mixtape"
@@ -32,15 +40,34 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
         download((min: number, max: number, progress: number, estimatedDownloadTime: number) => {
             progressBar.setValue(progress);
             statusLabel.setText(`remaining:${Math.round(estimatedDownloadTime * 60)}s`)
-        }, url).then(() => {
-            statusLabel.setText("done..")
+        }, url).then((filePath) => {
+            statusLabel.setText("transcoding..")
+            
+            var readStream = fs.createReadStream(filePath);
+            var writeStream = fs.createWriteStream(filePath.replace(".webm", ".mp3"));
+
+            ffmpeg(readStream)
+  
+            .format('mp3')
+            .pipe(writeStream);
+            
+  
+            const p = new Promise<void>((resolve, reject) => {
+                writeStream.on('finish', ()=>{
+                    resolve();
+                     statusLabel.setText("done.")
+                    })
+            })
         }).catch((reason => {
             statusLabel.setText(`download failed:${reason}`)
         }))
             .finally(() => {
+                
                 progressBar.reset()
                 startDownloadButton.setEnabled(true)
             })
+
+        
     });
 
     const browserLinkLabel = new QLabel();
