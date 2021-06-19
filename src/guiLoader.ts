@@ -1,5 +1,4 @@
 import { QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QTextEdit, QProgressBar, QPixmap } from '@nodegui/nodegui';
-import { transcode } from 'node:buffer';
 import { download } from './youtube'
 import {extractMp3} from './transcoder'
 
