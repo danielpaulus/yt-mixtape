@@ -41,20 +41,22 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
             statusLabel.setText("transcoding..")
             
             var readStream = fs.createReadStream(filePath);
-            var writeStream = fs.createWriteStream(filePath.replace(".webm", ".mp3"));
+            var mp3FileStream = fs.createWriteStream(filePath.replace(".webm", ".mp3"));
 
-            ffmpeg(readStream)
-  
-            .format('mp3')
-            .pipe(writeStream);
+            const ffmpegStream = ffmpeg(readStream).format('mp3');
+            ffmpegStream.pipe(mp3FileStream);
             
   
-            const p = new Promise<void>((resolve, reject) => {
-                writeStream.on('finish', ()=>{
-                    resolve();
+           
+                mp3FileStream.on('finish', ()=>{
+               
                      statusLabel.setText("done.")
                     })
-            })
+                    mp3FileStream.on('error', (err)=>{
+                    throw err
+                    })
+                    
+       
         }).catch((reason => {
             statusLabel.setText(`download failed:${reason}`)
         }))
