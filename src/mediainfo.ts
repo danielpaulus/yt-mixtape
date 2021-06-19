@@ -1,7 +1,8 @@
+/* eslint-disable require-jsdoc */
 export class MediaInfo {
-    constructor(
-        readonly title: String,
-         readonly uploadedBy: String,
-          readonly id:String, 
-          ) {}
-  }
+  constructor(
+        readonly title: string,
+        readonly uploadedBy: string,
+        readonly id: string,
+  ) { }
+}
