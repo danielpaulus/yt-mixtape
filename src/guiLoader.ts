@@ -36,22 +36,22 @@ export const initGUI = (qrCodePngFilePath: string, port: number) => {
             progressBar.setValue(progress);
             statusLabel.setText(`remaining:${Math.round(estimatedDownloadTime * 60)}s`)
         }, url).then((filePath) => {
-            statusLabel.setText("transcoding..")
+            statusLabel.setText("creating mp3..")
             progressBar.reset()
             extractMp3(filePath, (min, max, progress, estimatedTime) =>{
                 progressBar.setValue(progress)
-            }).then(()=>{statusLabel.setText("done")})
-       
-        }).catch((reason => {
-            statusLabel.setText(`download failed:${reason}`)
-        }))
-            .finally(() => {
-                
+            }).then(()=>{}).finally(()=>{
+                statusLabel.setText("done")
                 progressBar.reset()
                 startDownloadButton.setEnabled(true)
             })
-
-        
+       
+        }).catch((reason => {
+            statusLabel.setText(`download failed:${reason}`)
+            progressBar.reset()
+            startDownloadButton.setEnabled(true)
+        }))
+           
     });
 
     const browserLinkLabel = new QLabel();
