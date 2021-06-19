@@ -26,13 +26,4 @@ import express from 'express';
   app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
   });
-
-  /*
-  import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-  // open the database
-  const db = await open({
-    filename: 'database.db',
-    driver: sqlite3.Database
-  })*/
 })();
