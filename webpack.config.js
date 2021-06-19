@@ -60,7 +60,7 @@ new PermissionsOutputPlugin({
     {
       path:  path.resolve(__dirname, "dist/bin"),
       fileMode: '755',
-      dirMode: '777'
+      dirMode: '755'
     },
   ]
     ,
