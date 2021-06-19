@@ -53,8 +53,17 @@ module.exports = {
   new CopyPlugin(
     {patterns:[
     { from: 'node_modules/ffmpeg-static/ffmpeg', to: '' },
+    { from: 'node_modules/ffprobe-static/bin', to: 'bin' },
 ]}),
 new PermissionsOutputPlugin({
+  buildFolders: [
+    {
+      path:  path.resolve(__dirname, "dist/bin"),
+      fileMode: '755',
+      dirMode: '777'
+    },
+  ]
+    ,
   buildFiles: [
     {
       path: 'dist/ffmpeg',
