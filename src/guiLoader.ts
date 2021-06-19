@@ -85,6 +85,5 @@ export const initGUI = (qrCodePngFilePath: string, port: number):void => {
   `
   );
   win.show();
-
-  (global as any).win = win;
+  global.win = win;
 };
