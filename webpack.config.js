@@ -1,6 +1,9 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
+const PermissionsOutputPlugin = require('webpack-permissions-plugin');
 
+var webpack = require('webpack');
 module.exports = {
   mode: process.NODE_ENV || "development",
   entry: "./src",
@@ -40,7 +43,33 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".jsx"]
   },
   externals: {
-    sqlite3: 'commonjs sqlite3'
+    sqlite3: 'commonjs sqlite3',
+    
 },
-  plugins: [new CleanWebpackPlugin()]
+  plugins: [new CleanWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.FLUENTFFMPEG_COV': false
+  }),
+  new CopyPlugin(
+    {patterns:[
+    { from: 'node_modules/ffmpeg-static/ffmpeg', to: '' },
+    { from: 'node_modules/ffprobe-static/bin', to: 'bin' },
+]}),
+new PermissionsOutputPlugin({
+  buildFolders: [
+    {
+      path:  path.resolve(__dirname, "dist/bin"),
+      fileMode: '755',
+      dirMode: '755'
+    },
+  ]
+    ,
+  buildFiles: [
+    {
+      path: 'dist/ffmpeg',
+      fileMode: '755'
+    },]
+}),
+
+]
 };

@@ -4,5 +4,6 @@ dist/
 .vscode
 public/media/*.json
 public/media/*.webm
+public/media/*.mp3
 .DS_Store
 qr.png
