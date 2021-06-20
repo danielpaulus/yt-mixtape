@@ -3,8 +3,11 @@ import {generateQR} from './qrCodeGenerator';
 import {configureExpress} from './webserver';
 
 import express from 'express';
+import {MediaInfoRepository} from './mediaInfoRepo';
 
 (async () => {
+  const mediaInfoRepo = new MediaInfoRepository('database.db');
+  await mediaInfoRepo.initDb();
   const port = 8000;
   const absoulteImagePath = await generateQR(port);
   let headless = false;
@@ -16,12 +19,12 @@ import express from 'express';
     }
   }
   if (!headless ) {
-    initGUI(absoulteImagePath, port);
+    initGUI(absoulteImagePath, port, mediaInfoRepo);
   }
 
   // rest of the code remains same
   const app = express();
-  configureExpress(app);
+  configureExpress(app, mediaInfoRepo);
 
   app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);

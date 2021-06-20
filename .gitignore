@@ -7,3 +7,4 @@ public/media/*.webm
 public/media/*.mp3
 .DS_Store
 qr.png
+database.db

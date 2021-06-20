@@ -5,14 +5,15 @@ import ffmpegPath from 'ffmpeg-static';
 import ffprobe from 'ffprobe-static';
 
 import {ProgressUpdateFunc} from './progressListener';
+import {MediaInfo} from './mediainfo';
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobe.path);
 
-export const extractMp3 = async (filePath:string, updater: ProgressUpdateFunc):Promise<void> =>{
-  const mp3FileStream = fs.createWriteStream(filePath.replace('.webm', '.mp3'));
+export const extractMp3 = async (mediaInfo:MediaInfo, updater: ProgressUpdateFunc):Promise<void> =>{
+  const mp3FileStream = fs.createWriteStream(mediaInfo.getMp3Path());
 
-  const ffmpegStream = ffmpeg(filePath).format('mp3');
+  const ffmpegStream = ffmpeg(mediaInfo.getVideoPath()).format('mp3');
 
 
   // need to call this to get percentage in the progress updates later

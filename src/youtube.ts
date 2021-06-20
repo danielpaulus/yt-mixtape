@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import {MediaInfo} from './mediainfo';
 import {ProgressUpdateFunc} from './progressListener';
 
-export const download = async (updater: ProgressUpdateFunc, url: string):Promise<string> => {
+export const download = async (updater: ProgressUpdateFunc, url: string):Promise<MediaInfo> => {
   const info = await ytdl.getInfo(url);
   const videoInfo = new MediaInfo(
       info.videoDetails.title,
@@ -11,7 +11,6 @@ export const download = async (updater: ProgressUpdateFunc, url: string):Promise
       info.videoDetails.videoId
   );
 
-  await fs.promises.writeFile(`public/media/${info.videoDetails.videoId}.json`, JSON.stringify(videoInfo));
   await fs.promises.writeFile(`public/media/${info.videoDetails.videoId}-blob.json`, JSON.stringify(info));
 
   console.log('title:', info.videoDetails.title);
@@ -19,10 +18,10 @@ export const download = async (updater: ProgressUpdateFunc, url: string):Promise
   console.log('uploaded by:', info.videoDetails.author.name);
 
   const video = ytdl(url);
-  const downloadPromise = new Promise<string>((resolve, reject) => {
+  const downloadPromise = new Promise<MediaInfo>((resolve, reject) => {
     let starttime: number;
     video.on('error', reject);
-    const videoPath = `public/media/${info.videoDetails.videoId}.webm`;
+    const videoPath = videoInfo.getVideoPath();
     const fileStream = fs.createWriteStream(videoPath);
     fileStream.on('error', reject);
     video.pipe(fileStream);
@@ -39,7 +38,7 @@ export const download = async (updater: ProgressUpdateFunc, url: string):Promise
     });
 
     video.on('end', () => {
-      resolve(videoPath);
+      resolve(videoInfo);
     });
   });
   return await downloadPromise;
