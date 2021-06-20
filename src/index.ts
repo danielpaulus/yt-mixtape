@@ -30,3 +30,16 @@ import {MediaInfoRepository} from './mediaInfoRepo';
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
   });
 })();
+
+/*
+const reset =() =>{
+  const files: any[] = [];
+  fs.readdirSync('public/media').forEach((file) => {
+    if (file.endsWith('.webm')) {
+      const info:MediaInfo = JSON.parse(fs.readFileSync('public/media/' + file.replace('.webm', '.json')).toString());
+
+      files.push({filename: file, title: info.title});
+    }
+  });
+};
+*/
