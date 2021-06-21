@@ -10,7 +10,7 @@ import {getMediaInfo} from './youtube';
 import {extractMp3} from './transcoder';
 
 import pino from 'pino';
-const logger = pino({
+const log = pino({
   prettyPrint: true,
 });
 
@@ -26,37 +26,37 @@ const fixDb = async () =>{
   await mediaInfoRepo.initDb();
   for (const file of files) {
     if (file.endsWith('.json')) {
-      console.log('deleting old json:'+file);
+      log.info('deleting old json:'+file);
       fs.unlinkSync('public/media/'+file);
     }
     if (file.endsWith('.webm')) {
-      console.log('found downloaded video:'+file);
+      log.info('found downloaded video:'+file);
       const id = file.replace('.webm', '');
-      console.log('getting media info for'+id);
+      log.info('getting media info for'+id);
       try {
         const info = await getMediaInfo(id);
         if (!fs.existsSync(info.getMp3Path())) {
-          console.log('need to transcode'+info.getMp3Path());
+          log.info('need to transcode'+info.getMp3Path());
           await extractMp3(info, (min, max, progress)=>{
-            console.log(progress);
+            log.info('progress:', progress);
           });
         }
         await mediaInfoRepo.add(info);
-        console.log('done fixing:'+ info.getVideoPath());
+        log.info('done fixing:'+ info.getVideoPath());
       } catch (e) {
-        console.log(e);
+        log.info(e);
       }
     }
   }
 };
 
 (async () => {
-  logger.info('Starting yt-mixtape');
+  log.info('Starting yt-mixtape');
   let headless = false;
   const myArgs = process.argv.slice(2);
   if (myArgs.length > 0) {
     if (myArgs[0] === '--headless') {
-      console.log('running headless mode');
+      log.info('running headless mode');
       headless = true;
     }
     if (myArgs[0] === '--fixdb') {
@@ -78,7 +78,7 @@ const fixDb = async () =>{
   configureExpress(app, mediaInfoRepo);
 
   app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+    log.info(`⚡️[server]: Server is running at https://localhost:${port}`);
   });
 })();
 
