@@ -3,6 +3,16 @@ import * as fs from 'fs';
 import {MediaInfo} from './mediainfo';
 import {ProgressUpdateFunc} from './progressListener';
 
+export const getMediaInfo = async (id: string):Promise<MediaInfo> => {
+  const info = await ytdl.getInfo(id);
+  const videoInfo = new MediaInfo(
+      info.videoDetails.title,
+      info.videoDetails.author.name,
+      info.videoDetails.videoId
+  );
+  return videoInfo;
+};
+
 export const download = async (updater: ProgressUpdateFunc, url: string):Promise<MediaInfo> => {
   const info = await ytdl.getInfo(url);
   const videoInfo = new MediaInfo(

@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import {initGUI} from './guiLoader';
 import {generateQR} from './qrCodeGenerator';
 import {configureExpress} from './webserver';
@@ -5,11 +6,45 @@ import {configureExpress} from './webserver';
 import express from 'express';
 import {MediaInfoRepository} from './mediaInfoRepo';
 
-(async () => {
+import {getMediaInfo} from './youtube';
+import {extractMp3} from './transcoder';
+/**
+ * fixDb re-creates the database by listing all webm files, transcoding to mp3 if needed
+ * and redownloading the youtube info.
+ *
+ */
+const fixDb = async () =>{
+  const files = fs.readdirSync('public/media');
+  fs.unlinkSync('database.db');
   const mediaInfoRepo = new MediaInfoRepository('database.db');
   await mediaInfoRepo.initDb();
-  const port = 8000;
-  const absoulteImagePath = await generateQR(port);
+  for (const file of files) {
+    if (file.endsWith('.json')) {
+      console.log('deleting old json:'+file);
+      fs.unlinkSync('public/media/'+file);
+    }
+    if (file.endsWith('.webm')) {
+      console.log('found downloaded video:'+file);
+      const id = file.replace('.webm', '');
+      console.log('getting media info for'+id);
+      try {
+        const info = await getMediaInfo(id);
+        if (!fs.existsSync(info.getMp3Path())) {
+          console.log('need to transcode'+info.getMp3Path());
+          await extractMp3(info, (min, max, progress)=>{
+            console.log(progress);
+          });
+        }
+        await mediaInfoRepo.add(info);
+        console.log('done fixing:'+ info.getVideoPath());
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+};
+
+(async () => {
   let headless = false;
   const myArgs = process.argv.slice(2);
   if (myArgs.length > 0) {
@@ -17,7 +52,16 @@ import {MediaInfoRepository} from './mediaInfoRepo';
       console.log('running headless mode');
       headless = true;
     }
+    if (myArgs[0] === '--fixdb') {
+      await fixDb();
+      process.exit(0);
+    }
   }
+  const mediaInfoRepo = new MediaInfoRepository('database.db');
+  await mediaInfoRepo.initDb();
+  const port = 8000;
+  const absoulteImagePath = await generateQR(port);
+
   if (!headless ) {
     initGUI(absoulteImagePath, port, mediaInfoRepo);
   }
@@ -31,15 +75,4 @@ import {MediaInfoRepository} from './mediaInfoRepo';
   });
 })();
 
-/*
-const reset =() =>{
-  const files: any[] = [];
-  fs.readdirSync('public/media').forEach((file) => {
-    if (file.endsWith('.webm')) {
-      const info:MediaInfo = JSON.parse(fs.readFileSync('public/media/' + file.replace('.webm', '.json')).toString());
 
-      files.push({filename: file, title: info.title});
-    }
-  });
-};
-*/
