@@ -1,4 +1,3 @@
-
 import sqlite3 from 'sqlite3';
 import {open, Database as GDatabase} from 'sqlite';
 import {MediaInfo} from './mediainfo';

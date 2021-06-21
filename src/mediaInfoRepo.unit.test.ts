@@ -1,4 +1,3 @@
-
 import * as fs from 'fs';
 import {MediaInfo} from './mediainfo';
 import {MediaInfoRepository} from './mediaInfoRepo';
