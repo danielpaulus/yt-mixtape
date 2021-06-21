@@ -10,5 +10,5 @@
       "plugin:@typescript-eslint/recommended",
       "google"
     ],
-    "rules": {"max-len":"off"}
+    "rules": {"max-len":"off", "require-jsdoc":"off"}
   }

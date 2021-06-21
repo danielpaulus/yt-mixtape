@@ -1,12 +1,13 @@
 import {QMainWindow, QWidget, QLabel, FlexLayout, QPushButton, QTextEdit, QProgressBar, QPixmap} from '@nodegui/nodegui';
 import {download} from './youtube';
 import {extractMp3} from './transcoder';
+import {MediaInfoRepository} from './mediaInfoRepo';
 
 
 const defaultYoutubeLink = 'https://www.youtube.com/watch?v=7EPJEg6R3SM';
 const appTitle = 'yt-mixtape';
 
-export const initGUI = (qrCodePngFilePath: string, port: number):void => {
+export const initGUI = (qrCodePngFilePath: string, port: number, mediaInfoRepo:MediaInfoRepository):void => {
   const image = new QPixmap();
   image.load(qrCodePngFilePath);
 
@@ -34,10 +35,11 @@ export const initGUI = (qrCodePngFilePath: string, port: number):void => {
     download((min: number, max: number, progress: number, estimatedDownloadTime: number) => {
       progressBar.setValue(progress);
       statusLabel.setText(`remaining:${Math.round(estimatedDownloadTime * 60)}s`);
-    }, url).then((filePath) => {
+    }, url).then((videoInfo) => {
+      mediaInfoRepo.add(videoInfo);
       statusLabel.setText('creating mp3..');
       progressBar.reset();
-      extractMp3(filePath, (min, max, progress) =>{
+      extractMp3(videoInfo, (min, max, progress) =>{
         progressBar.setValue(progress);
       }).finally(()=>{
         statusLabel.setText('done');

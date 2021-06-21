@@ -1,3 +1,5 @@
+const mediaRoot ='public/media';
+
 /* eslint-disable require-jsdoc */
 export class MediaInfo {
   constructor(
@@ -5,4 +7,10 @@ export class MediaInfo {
         readonly uploadedBy: string,
         readonly id: string,
   ) { }
+  getMp3Path():string {
+    return `${mediaRoot}/${this.id}.mp3`;
+  }
+  getVideoPath():string {
+    return `${mediaRoot}/${this.id}.webm`;
+  }
 }
