@@ -8,6 +8,12 @@ import {MediaInfoRepository} from './mediaInfoRepo';
 
 import {getMediaInfo} from './youtube';
 import {extractMp3} from './transcoder';
+
+import pino from 'pino';
+const logger = pino({
+  prettyPrint: true,
+});
+
 /**
  * fixDb re-creates the database by listing all webm files, transcoding to mp3 if needed
  * and redownloading the youtube info.
@@ -45,6 +51,7 @@ const fixDb = async () =>{
 };
 
 (async () => {
+  logger.info('Starting yt-mixtape');
   let headless = false;
   const myArgs = process.argv.slice(2);
   if (myArgs.length > 0) {
