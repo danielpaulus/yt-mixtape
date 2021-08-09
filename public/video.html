@@ -47,7 +47,7 @@ var params = getSearchParameters();
     var video = document.getElementById('my-video');
 var source = document.createElement('source');
 
-source.setAttribute('src', "media/"+params.v);
+source.setAttribute('src', "media/"+params.v+".mp3");
 
 video.appendChild(source);
 video.play();

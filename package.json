@@ -27,7 +27,7 @@
     "qrcode": "^1.4.4",
     "sqlite": "^4.0.23",
     "sqlite3": "^5.0.2",
-    "ytdl-core": "^4.8.2"
+    "ytdl-core": "^4.8.3"
   },
   "devDependencies": {
     "@nodegui/packer": "^1.4.1",
