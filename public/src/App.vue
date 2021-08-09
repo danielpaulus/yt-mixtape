@@ -8,6 +8,11 @@
     <main>
       <router-view/>
     </main>
+      <div>
+      <button class="bg-red-100 px-4 py-3 hover:bg-red-300">
+    Tailwind Button
+  </button>
+  </div>
   </div>
 </template>
 

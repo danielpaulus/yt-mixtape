@@ -34,6 +34,7 @@ module.exports = (env, argv) => ({
         use: [
           'vue-style-loader',
           'css-loader',
+          'postcss-loader',
         ],
         exclude: /\.module\.css$/,
       },
