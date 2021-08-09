@@ -1,7 +1,9 @@
 import express from 'express';
 import {MediaInfoRepository} from './mediaInfoRepo';
+import cors from 'cors';
 
 export const configureExpress = async (app: express.Application, mediaInfoRepo: MediaInfoRepository): Promise<void> => {
+  app.use(cors());
   app.use(express.static('public'));
   /* app.get('/', async (req, res) => {
      const mediaFiles = await mediaInfoRepo.list();

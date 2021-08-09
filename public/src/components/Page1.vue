@@ -42,6 +42,10 @@
         </div>
         <div class="flex space-x-3 text-sm font-bold uppercase mb-4">
             <div class="flex-auto flex space-x-3">
+                <audio controls>
+  <source src="https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3" type="audio/mpeg">
+  Your browser does not support the audio tag.
+</audio>
                 <button class="w-1/2 flex items-center justify-center bg-lime-300 text-black border border-black shadow-offset-black" type="submit">Buy now</button>
                 <button class="w-1/2 flex items-center justify-center border border-black shadow-offset-black" type="button">Add to bag</button>
             </div>
@@ -63,4 +67,46 @@
 </style>
 
 <script>
+import axios from "axios"
+export default {
+     data() {
+    return {
+      section: "home",
+      tracks: [],
+    }
+},
+methods: {
+     async fetchNews() {
+      try {
+        const url = `http://localhost:8000/mediainfo`
+        const response = await axios.get(url)
+        const results = response.data
+        console.log(results)
+        this.tracks = results.map(post => ({
+          title: post.title,
+          abstract: post.abstract,
+          url: post.url,
+          //thumbnail: this.extractImage(post).url,
+          //caption: this.extractImage(post).caption,
+          byline: post.byline,
+          published_date: post.published_date,
+        }))
+      } catch (err) {
+        if (err.response) {
+          // client received an error response (5xx, 4xx)
+          console.log("Server Error:", err)
+        } else if (err.request) {
+          // client never received a response, or request never left
+          console.log("Network Error:", err)
+        } else {
+          console.log("Client Error:", err)
+        }
+      }
+    },
+  },
+  mounted() {
+    this.fetchNews()
+  },
+}
+
 </script>
