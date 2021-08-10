@@ -84,7 +84,7 @@ mounted: function () {
   },
   methods: {
   async storeDb(id) {
-    const res = await fetch("media/"+id+".mp3");
+    const res = await fetch("https://e0419ff12734.ngrok.io/media/"+id+".mp3");
     console.log("download done")
     const blob = await res.blob();
     // Store the binary data in indexedDB:
@@ -113,7 +113,7 @@ return  count >= 1
       this.currentTrack = blobUrl
       return
       }
-      this.currentTrack= "media/"+id+".mp3"
+      this.currentTrack= "https://e0419ff12734.ngrok.io/media/"+id+".mp3"
   }
   },
   }

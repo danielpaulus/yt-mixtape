@@ -19,7 +19,7 @@ export default {
 methods: {
      async fetchNews() {
       try {
-        const url = `http://192.168.2.102:8000/mediainfo`
+        const url = `https://e0419ff12734.ngrok.io/mediainfo`
         const response = await axios.get(url)
         this.tracks = response.data
       } catch (err) {
