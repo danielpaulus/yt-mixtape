@@ -19,7 +19,7 @@ export default {
 methods: {
      async fetchNews() {
       try {
-        const url = `http://localhost:8000/mediainfo`
+        const url = `http://192.168.2.102:8000/mediainfo`
         const response = await axios.get(url)
         this.tracks = response.data
       } catch (err) {
