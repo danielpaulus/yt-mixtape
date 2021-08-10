@@ -1,5 +1,12 @@
 <template>
 <div>
+    {{currentTrack}}
+            <audio ref="player" controls>
+  <source v-bind:src="currentTrack" type="audio/mpeg">
+  
+  
+  Your browser does not support the audio tag.
+</audio>
     <div v-for="(track, index) in tracks" :key="index" :track="track" class="flex p-6 font-mono">
     <div class="flex-none w-40 relative">
         <img src="/retro-shoe.jpg" alt="" class="absolute inset-0 w-full h-full object-cover border border-black shadow-offset-lime" />
@@ -18,37 +25,24 @@
         </div>
         <div class="flex items-baseline py-8">
             <div class="space-x-3.5 flex text-center text-sm leading-none font-bold text-gray-500">
-                <label>
+                <label v-show="isAvailableOffline(track.id)">
                     <input class="w-6 text-black shadow-underline" name="size" type="radio" value="xs" checked>
-                    XS
+                    available offline
                 </label>
-                <label>
+    
+                <label v-show="!isAvailableOffline(track.id)">
                     <input class="w-6" name="size" type="radio" value="s">
-                    S
+                    not available offline
                 </label>
-                <label>
-                    <input class="w-6" name="size" type="radio" value="m">
-                    M
-                </label>
-                <label>
-                    <input class="w-6" name="size" type="radio" value="l">
-                    L
-                </label>
-                <label>
-                    <input class="w-6" name="size" type="radio" value="xl">
-                    XL
-                </label>
+                
             </div>
             <div class="ml-auto text-xs underline">Size Guide</div>
         </div>
         <div class="flex space-x-3 text-sm font-bold uppercase mb-4">
             <div class="flex-auto flex space-x-3">
-                <audio controls>
-  <source :src='"media/"+track.id+".mp3"' type="audio/mpeg">
-  Your browser does not support the audio tag.
-</audio>
-                <button class="w-1/2 flex items-center justify-center bg-lime-300 text-black border border-black shadow-offset-black" type="submit">Buy now</button>
-                <button class="w-1/2 flex items-center justify-center border border-black shadow-offset-black" type="button">Add to bag</button>
+        
+                <button v-on:click="storeDb(track.id)" class="w-1/2 flex items-center justify-center bg-lime-300 text-black border border-black shadow-offset-black" type="submit">Download</button>
+                <button v-on:click="createSource(track.id)" class="w-1/2 flex items-center justify-center border border-black shadow-offset-black" type="button">play</button>
             </div>
             <button class="flex-none flex items-center justify-center w-9 h-9 border border-black" type="button" aria-label="like">
                 <svg width="20" height="20" fill="currentColor">
@@ -64,12 +58,63 @@
 </div>
 </template>
 <script>
+import Dexie from 'dexie'
+  var db = new Dexie("MyImgDb");
+db.version(1).stores({
+    friends: "name"
+});
+
 export default {
   props: {
 tracks: {
       type: Array,
       required: true,
     },
+  },
+     data() {
+    return {
+      currentTrack: "none.mp3",
+    }
+},
+mounted: function () {
+  	this.$watch('currentTrack', function () {
+    	this.$refs.player.load()
+        this.$refs.player.play()
+    })
+  },
+  methods: {
+  async storeDb(id) {
+    const res = await fetch("media/"+id+".mp3");
+    console.log("download done")
+    const blob = await res.blob();
+    // Store the binary data in indexedDB:
+    console.log("storing blob")
+    console.log(blob)
+    await db.friends.put({
+        name: id,
+        image: blob
+    });
+    console.log("done")
+  },
+  async isAvailableOffline(id) {
+const count =  await db.friends.where("name").equals(id).count()
+console.log(count)
+return  count >= 1
+  },
+  async createSource(id){
+      console.log(id)
+      
+      
+      const avail = await this.isAvailableOffline(id)
+      console.log(avail)
+      if (avail){
+        const entry = await db.friends.where("name").equals(id).first()
+      var blobUrl = URL.createObjectURL(entry.image);
+      this.currentTrack = blobUrl
+      return
+      }
+      this.currentTrack= "media/"+id+".mp3"
+  }
   },
   }
 </script>
